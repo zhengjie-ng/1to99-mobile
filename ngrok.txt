@@ -1,0 +1,11 @@
+  Manual ngrok workflow:
+
+  1. Springboot Start backend: Make sure your Spring Boot app is running on port 8080
+  2. Springboot Start ngrok: "./ngrok http 8080 --host-header=localhost" (If first time, will need to sign up and setup ngrok token)
+  3. Springboot Get new URL: "curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url'"
+
+  4. JS Update config: Change EXPO_PUBLIC_WS_URL_NGROK in app.json to the new ngrok URL
+  5. JS Makes sure EXPO_PUBLIC_WS_MODE=local
+  5. JS Run "npx expo start --tunnel" or "npm run tunnel" and scan QR code
+
+  

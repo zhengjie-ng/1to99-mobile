@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "1to99-mobile",
-    "slug": "1to99-mobile",
+    "name": "1 to 99",
+    "slug": "1 to 99",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,6 +24,43 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/days-one/400Regular/DaysOne_400Regular.ttf"
+          ],
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Inter",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/days-one/400Regular/DaysOne_400Regular.ttf",
+                    "weight": 400
+                  }
+                ]
+              }
+            ]
+          },
+          "ios": {
+            "fonts": [
+              "./assets/fonts/days-one/400Regular/DaysOne_400Regular.ttf"
+            ]
+          }
+        }
+      ],
+      "expo-barcode-scanner"
+    ]
   }
 }
