@@ -128,10 +128,8 @@ function CameraScreen({ onBack, playerName }) {
   if (!permission) {
     console.log("🎥 No permission object yet");
     return (
-      <View style={[styles.permissionContainer, { backgroundColor: "blue" }]}>
-        <Text
-          style={[styles.permissionMessage, { color: "white", fontSize: 20 }]}
-        >
+      <View style={[styles.permissionContainer, { backgroundColor: "white" }]}>
+        <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
           Loading camera permissions...
         </Text>
       </View>
@@ -141,10 +139,8 @@ function CameraScreen({ onBack, playerName }) {
   // If permission is not granted
   if (!permission.granted) {
     return (
-      <View style={[styles.permissionContainer, { backgroundColor: "orange" }]}>
-        <Text
-          style={[styles.permissionMessage, { color: "white", fontSize: 20 }]}
-        >
+      <View style={[styles.permissionContainer]}>
+        <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
           We need your permission to show the camera.
         </Text>
         <Button onPress={requestPermission}>Grant Permission</Button>

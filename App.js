@@ -88,7 +88,7 @@ export default function App() {
 
   return (
     <GameProvider>
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, backgroundColor: "white" }}>
         <Animated.View style={[styles.imageBackground, { opacity: fadeAnim }]}>
           <ImageBackground
             source={require("./assets/images/pattern.jpg")}
