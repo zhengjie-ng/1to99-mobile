@@ -5,6 +5,7 @@ import GameLobby from "./GameLobby";
 import GamePlay from "./GamePlay";
 import GameFinished from "./GameFinished";
 import CameraScreen from "./CameraScreen";
+import Header from "../components/Header";
 
 function GameApp() {
   const { gameState, connected, gameRoom, playerName, backFromCameraToJoin } =
@@ -16,7 +17,11 @@ function GameApp() {
   console.log("🎮 GameApp - PlayerName:", playerName);
 
   if (!connected) {
-    return <Text>Connecting to server...</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Header style={{ fontSize: 20 }}>Connecting to server...</Header>
+      </View>
+    );
   }
 
   return (

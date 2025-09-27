@@ -12,15 +12,18 @@ import { Colors } from "../styles/colors";
 import Header from "../components/Header";
 import Board from "../components/Board";
 import QRCode from "react-qr-code";
+import { useRef } from "react";
 
 function GameLobby() {
-  const {
-    gameRoom,
-    playerName,
-    startGame,
-    quitGame,
-    removePlayer,
-  } = useGame();
+  const { gameRoom, playerName, startGame, quitGame, removePlayer } = useGame();
+  const scrollViewRef = useRef(null);
+
+  const handleScrollToEnd = (contentWidth, contentHeight) => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollToEnd({ animated: true });
+    }
+  };
+
   if (!gameRoom)
     return (
       <View>
@@ -35,7 +38,6 @@ function GameLobby() {
 
   return (
     <View style={styles.mainView}>
-      {/* <Header style={{ fontSize: 40 }}>Room: {gameRoom.roomId}</Header> */}
       <View style={styles.qrContainer}>
         <Text style={styles.qrLabel}>
           Scan QR code or enter Room ID to join
@@ -43,15 +45,20 @@ function GameLobby() {
         <View style={styles.qrCodeWrapper}>
           <QRCode
             value={gameRoom.roomId.toString()}
-            size={180}
+            size={140}
             bgColor="white"
             fgColor="black"
           />
         </View>
         <Text style={styles.roomIdText}>{gameRoom.roomId}</Text>
       </View>
-      <Board style={{ width: 350, minHeight: 0, height: 320, marginTop: 0 }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+
+      <Board style={{ width: "85%", minHeight: 0, flex: 1, marginTop: 0 }}>
+        <ScrollView
+          ref={scrollViewRef}
+          showsVerticalScrollIndicator={false}
+          onContentSizeChange={handleScrollToEnd}
+        >
           <View
             style={{
               flex: 1,
@@ -110,14 +117,15 @@ function GameLobby() {
           </View>
         </ScrollView>
       </Board>
-      {!isHost && (
-        <View>
-          <Text style={styles.waitingText}>
-            Waiting for host to start the game...
-          </Text>
-        </View>
-      )}
+
       <View style={styles.buttonContainer}>
+        {!isHost && (
+          <View>
+            <Text style={styles.waitingText}>
+              Waiting for host to start the game...
+            </Text>
+          </View>
+        )}
         {isHost && (
           <Button
             onPress={startGame}
@@ -136,11 +144,13 @@ function GameLobby() {
 
 const styles = StyleSheet.create({
   mainView: {
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
     flex: 1,
-    width: 300,
+    width: "100%",
     marginTop: 0,
+    paddingHorizontal: 0,
+    marginHorizontal: 0,
   },
   playersText: {
     fontFamily: "DaysOne_400Regular",
@@ -184,7 +194,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     gap: 10,
-    width: 350,
+    width: "85%",
   },
   waitingText: {
     color: Colors.GRAY,
@@ -196,7 +206,7 @@ const styles = StyleSheet.create({
   qrContainer: {
     backgroundColor: Colors.PRIMARY_LIGHT,
     padding: 20,
-    width: 350,
+    width: "85%",
     borderRadius: 10,
     marginVertical: 20,
     alignItems: "center",
