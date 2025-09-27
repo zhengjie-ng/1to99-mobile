@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "transparent",
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
     // paddingBottom: 60,
   },
@@ -148,18 +148,18 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
   },
   keyboardAvoidingView: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
     width: "100%",
   },
   gameContainer: {
     flex: 1,
-    alignItems: "center",
+    alignItems: "stretch",
     justifyContent: "center",
     width: "100%",
     // paddingBottom: 60,

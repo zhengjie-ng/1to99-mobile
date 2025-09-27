@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGame } from "../context/GameContext";
 import Button from "../components/Button";
 import { Colors } from "../styles/colors";
@@ -17,6 +17,7 @@ function GameFinished() {
   } = useGame();
   const [timeLeft, setTimeLeft] = useState(20);
   const [timerActive, setTimerActive] = useState(true);
+  const scrollViewRef = useRef(null);
 
   const lastTurn = gameHistory[gameHistory.length - 1];
   const loser = lastTurn ? lastTurn.playerName : "Unknown";
@@ -25,6 +26,26 @@ function GameFinished() {
   // const isHost =
   //   currentPlayer &&
   //   (currentPlayer.isHost || currentPlayer.id === gameRoom.hostId);
+
+  // Auto-scroll to the losing player
+  useEffect(() => {
+    if (gameRoom && scrollViewRef.current && loser) {
+      const loserIndex = gameRoom.players.findIndex(
+        (player) => player.name === loser
+      );
+      if (loserIndex !== -1) {
+        // Each player row is roughly 80px in height, plus header
+        const scrollPosition = loserIndex * 80 + 50; // +50 for header offset
+
+        setTimeout(() => {
+          scrollViewRef.current?.scrollTo({
+            y: scrollPosition,
+            animated: true,
+          });
+        }, 500); // Delay to ensure component is mounted
+      }
+    }
+  }, [gameRoom, loser]);
 
   useEffect(() => {
     if (!timerActive || timeLeft <= 0) return;
@@ -78,17 +99,20 @@ function GameFinished() {
         justifyContent: "flex-start",
         alignItems: "center",
         // marginTop: 10,
+        flex: 1,
+        // backgroundColor: "blue",
+        gap: 5,
       }}
     >
       <Header style={{ fontSize: 50 }}>Game Over!</Header>
-      <Board style={{ minHeight: 0, width: 380 }}>
+      <Board style={{ minHeight: 0, width: "90%", margin: 0 }}>
         <Header style={{ fontSize: 40, color: Colors.GRAY }}>
           {loser} <Text style={{ color: Colors.EXIT }}>Lost!</Text>
         </Header>
       </Board>
 
       {timerActive && timeLeft > 0 && (
-        <Board style={{ minHeight: 0, width: 380, marginVertical: 10 }}>
+        <Board style={{ minHeight: 0, width: "90%", marginVertical: 10 }}>
           <Header style={{ fontSize: 18, color: Colors.PRIMARY }}>
             Auto return to lobby in:{" "}
             <Text style={{ color: Colors.EXIT, fontWeight: "bold" }}>
@@ -98,7 +122,7 @@ function GameFinished() {
         </Board>
       )}
 
-      <Board style={{ minHeight: 0, width: 380 }}>
+      <Board style={{ minHeight: 0, width: "90%" }}>
         <Header style={{ fontSize: 20, color: Colors.GRAY }}>
           Secret Number:
           <Text style={{ color: Colors.EXIT }}> {lastTurn?.guess}</Text>
@@ -110,15 +134,20 @@ function GameFinished() {
 
       <Board
         style={{
-          width: 380,
-          height: 300,
+          width: "90%",
+          // height: 360,
+          minHeight: 0,
+          flex: 1,
           justifyContent: "start",
           gap: 5,
-          paddingTop: 20,
-          paddingBottom: 20,
+          // paddingTop: 20,
+          // paddingBottom: 20,
+          margin: 0,
+          // backgroundColor: "blue",
         }}
       >
         <ScrollView
+          ref={scrollViewRef}
           style={{ flex: 1, width: "100%" }}
           showsVerticalScrollIndicator={false}
         >
@@ -163,7 +192,7 @@ function GameFinished() {
         </ScrollView>
       </Board>
 
-      <View style={{ gap: 20, width: 380 }}>
+      <View style={{ gap: 10, width: "90%", marginTop: 10 }}>
         {/* {isHost && (
           <Button
             onPress={handleRestartGame}

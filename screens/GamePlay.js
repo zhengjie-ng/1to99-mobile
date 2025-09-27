@@ -7,7 +7,7 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useGame } from "../context/GameContext";
 import Header from "../components/Header";
 import Board from "../components/Board";
@@ -16,6 +16,7 @@ import { Colors } from "../styles/colors";
 
 function GamePlay() {
   const [guess, setGuess] = useState("");
+  const scrollViewRef = useRef(null);
   const {
     gameRoom,
     playerName,
@@ -25,7 +26,33 @@ function GamePlay() {
     removePlayer,
   } = useGame();
 
-  if (!gameRoom) return <div>Loading game...</div>;
+  // Auto-scroll to current player when turn changes
+  useEffect(() => {
+    if (
+      gameRoom &&
+      scrollViewRef.current &&
+      typeof gameRoom.currentPlayerIndex === "number"
+    ) {
+      const currentPlayerIndex = gameRoom.currentPlayerIndex;
+      // Approximate scroll position based on player index
+      // Each player row is roughly 80px in height
+      const scrollPosition = currentPlayerIndex * 80;
+
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({
+          y: scrollPosition,
+          animated: true,
+        });
+      }, 100);
+    }
+  }, [gameRoom?.currentPlayerIndex]);
+
+  if (!gameRoom)
+    return (
+      <View>
+        <Text>Loading game...</Text>
+      </View>
+    );
 
   const currentPlayer = gameRoom.players[gameRoom.currentPlayerIndex];
   const isMyTurn = currentPlayer.name === playerName;
@@ -52,6 +79,20 @@ function GamePlay() {
     setGuess("");
   };
 
+  const handleLeaveGame = () => {
+    Alert.alert("Leave Game", "Are you sure you want to leave the game?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Leave",
+        style: "destructive",
+        onPress: () => quitGame(),
+      },
+    ]);
+  };
+
   return (
     <View
       style={{
@@ -60,6 +101,8 @@ function GamePlay() {
         flex: 1,
         marginTop: 10,
         gap: 15,
+        width: "100%",
+        // backgroundColor: "blue",
       }}
     >
       <View>
@@ -69,7 +112,7 @@ function GamePlay() {
 
       <Board
         style={{
-          width: 380,
+          width: "90%",
           minHeight: 100,
           justifyContent: "center",
           gap: 20,
@@ -89,10 +132,7 @@ function GamePlay() {
           <Header style={{ fontSize: 17, color: Colors.GRAY }}>
             Current Turn: {currentPlayer.name}
             {isMyTurn && (
-              <Text style={{ color: Colors.SECONDARY_DARK }}>
-                {" "}
-                (Your Turn!)
-              </Text>
+              <Text style={{ color: Colors.SECONDARY_DARK }}>(Your Turn!)</Text>
             )}
           </Header>
         )}
@@ -100,10 +140,11 @@ function GamePlay() {
       {isMyTurn && !isSingleNumberLeft && (
         <Board
           style={{
-            width: 380,
-            minHeight: 100,
+            width: "90%",
+            minHeight: 0,
+            height: 100,
             justifyContent: "center",
-            gap: 5,
+            gap: 2,
             paddingTop: 20,
             paddingBottom: 20,
             flexDirection: "row",
@@ -125,16 +166,20 @@ function GamePlay() {
       )}
       <Board
         style={{
-          width: 380,
-          height: 360,
+          width: "90%",
+          // height: 360,
+          minHeight: 0,
+          flex: 1,
           justifyContent: "start",
           gap: 5,
-          paddingTop: 20,
-          paddingBottom: 20,
+          // paddingTop: 20,
+          // paddingBottom: 20,
           margin: 0,
+          // backgroundColor: "blue",
         }}
       >
         <ScrollView
+          ref={scrollViewRef}
           style={{ flex: 1, width: "100%" }}
           showsVerticalScrollIndicator={false}
         >
@@ -183,23 +228,25 @@ function GamePlay() {
                   </Text>
                 </View>
                 {canRemove && (
-                  <Pressable onPress={() => {
-                    Alert.alert(
-                      "Remove Player",
-                      `Are you sure you want to remove ${player.name} from the game?`,
-                      [
-                        {
-                          text: "Cancel",
-                          style: "cancel",
-                        },
-                        {
-                          text: "Remove",
-                          style: "destructive",
-                          onPress: () => removePlayer(player.name),
-                        },
-                      ]
-                    );
-                  }}>
+                  <Pressable
+                    onPress={() => {
+                      Alert.alert(
+                        "Remove Player",
+                        `Are you sure you want to remove ${player.name} from the game?`,
+                        [
+                          {
+                            text: "Cancel",
+                            style: "cancel",
+                          },
+                          {
+                            text: "Remove",
+                            style: "destructive",
+                            onPress: () => removePlayer(player.name),
+                          },
+                        ]
+                      );
+                    }}
+                  >
                     <Text
                       style={{
                         textAlign: "center",
@@ -217,7 +264,10 @@ function GamePlay() {
         </ScrollView>
       </Board>
 
-      <Button onPress={quitGame} style={{ backgroundColor: Colors.EXIT }}>
+      <Button
+        onPress={handleLeaveGame}
+        style={{ backgroundColor: Colors.EXIT }}
+      >
         Leave Game
       </Button>
     </View>
@@ -236,7 +286,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     backgroundColor: "white",
     fontSize: 20,
-    width: 200,
+    width: 180,
   },
   playerRow: {
     flexDirection: "row",

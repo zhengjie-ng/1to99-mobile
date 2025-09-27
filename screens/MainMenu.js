@@ -120,7 +120,7 @@ function MainMenu() {
         Guess Everything Except the Secret Number
       </Text>
 
-      {mode !== "join" && (
+      {!mode && (
         <View style={styles.textInputView}>
           <Text style={styles.label}>Name:</Text>
           <TextInput
@@ -142,34 +142,37 @@ function MainMenu() {
           </Button>
         </View>
       ) : (
-        <View>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            {mode === "join" && (
-              <View style={styles.textInputView}>
-                <Text style={styles.label}>Room:</Text>
-                <TextInput
-                  style={styles.textInput}
-                  value={roomId}
-                  onChangeText={setRoomId}
-                  keyboardType="number-pad"
-                  returnKeyType="done"
-                  placeholder="Enter Room ID"
-                />
-              </View>
-            )}
-          </View>
+        <View style={styles.joinModeContainer}>
+          {mode === "join" && (
+            <View style={styles.textInputView}>
+              <Text style={styles.label}>Name:</Text>
+              <TextInput
+                style={styles.textInput}
+                value={localPlayerName}
+                onChangeText={setLocalPlayerName}
+                placeholder="Enter your name"
+              />
+            </View>
+          )}
+
+          {mode === "join" && (
+            <View style={styles.textInputView}>
+              <Text style={styles.label}>Room:</Text>
+              <TextInput
+                style={styles.textInput}
+                value={roomId}
+                onChangeText={setRoomId}
+                keyboardType="number-pad"
+                returnKeyType="done"
+                placeholder="Enter Room ID"
+              />
+            </View>
+          )}
+
           <View style={styles.buttonView}>
             <Button onPress={handleSubmit} disabled={isSubmitting}>
               {mode === "create" ? "Create Room" : "Join Room"}
             </Button>
-            {/* {mode === "join" && (
-              <Header style={{ color: "#6e6e6eff", fontSize: 20 }}>or</Header>
-            )} */}
             {mode === "join" && (
               <Button onPress={handleQRScan}>Scan QR Code</Button>
             )}
@@ -204,11 +207,11 @@ const styles = StyleSheet.create({
   buttonView: {
     gap: 20,
     marginTop: 20,
-    width: 340,
+    width: "80%",
   },
   textInputView: {
     flexDirection: "row",
-    width: 350,
+    width: "80%",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -231,6 +234,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 0,
     margin: 0,
+  },
+  joinModeContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
   },
 });
 
