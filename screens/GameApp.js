@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { useGame } from "../context/GameContext";
 import MainMenu from "./MainMenu";
 import GameLobby from "./GameLobby";
