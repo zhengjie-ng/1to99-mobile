@@ -102,7 +102,6 @@ function GamePlay() {
         marginTop: 10,
         gap: 15,
         width: "100%",
-        // backgroundColor: "blue",
       }}
     >
       <View>
@@ -167,15 +166,11 @@ function GamePlay() {
       <Board
         style={{
           width: "90%",
-          // height: 360,
           minHeight: 0,
           flex: 1,
           justifyContent: "start",
           gap: 5,
-          // paddingTop: 20,
-          // paddingBottom: 20,
           margin: 0,
-          // backgroundColor: "blue",
         }}
       >
         <ScrollView

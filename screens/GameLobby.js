@@ -26,8 +26,8 @@ function GameLobby() {
 
   if (!gameRoom)
     return (
-      <View>
-        <Text>Loading lobby...</Text>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Header style={{ fontSize: 24 }}>Loading lobby...</Header>
       </View>
     );
 
@@ -105,6 +105,7 @@ function GameLobby() {
                           textAlign: "center",
                           color: Colors.EXIT,
                           fontWeight: 800,
+                          paddingRight: 5,
                         }}
                       >
                         X

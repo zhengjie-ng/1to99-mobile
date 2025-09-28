@@ -9,15 +9,51 @@ import {
 } from "react-native";
 import { useRef, useEffect } from "react";
 import { Audio } from "expo-av";
-import { GameProvider } from "./context/GameContext";
+import { GameProvider, useGame } from "./context/GameContext";
 import soundService from "./services/SoundService";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { Poppins_400Regular } from "@expo-google-fonts/poppins";
 import { DaysOne_400Regular } from "@expo-google-fonts/days-one";
 import { Colors } from "./styles/colors";
-import GameApp from "./screens/GameApp";
 import Countdown from "./screens/Countdown";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import StackNavigator from "./navigation/StackNavigator";
+
+function NavigationHandler() {
+  const navigation = useNavigation();
+  const { gameState } = useGame();
+
+  useEffect(() => {
+    if (!navigation || !gameState) return;
+
+    try {
+      switch (gameState) {
+        case "MENU":
+          navigation.navigate("MENU");
+          break;
+        case "LOBBY":
+          navigation.navigate("LOBBY");
+          break;
+        case "PLAYING":
+          navigation.navigate("PLAYING");
+          break;
+        case "FINISHED":
+          navigation.navigate("FINISHED");
+          break;
+        case "CAMERA":
+          navigation.navigate("CAMERA");
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log("Navigation error:", error);
+    }
+  }, [gameState, navigation]);
+
+  return null;
+}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -88,30 +124,35 @@ export default function App() {
 
   return (
     <GameProvider>
-      <View style={{ flex: 1, backgroundColor: "white" }}>
-        <Animated.View style={[styles.imageBackground, { opacity: fadeAnim }]}>
-          <ImageBackground
-            source={require("./assets/images/pattern.jpg")}
-            style={styles.imageBackgroundContainer}
-            imageStyle={styles.imageStyle}
-            resizeMode="repeat"
-          />
-        </Animated.View>
-        <SafeAreaProvider style={styles.container}>
-          <SafeAreaView style={styles.safeArea}>
-            <KeyboardAvoidingView
-              style={styles.keyboardAvoidingView}
-              behavior="padding"
-            >
-              <View style={styles.gameContainer}>
-                <GameApp />
-                <StatusBar style="auto" />
-              </View>
-            </KeyboardAvoidingView>
-          </SafeAreaView>
-        </SafeAreaProvider>
-        <Countdown />
-      </View>
+      <NavigationContainer>
+        <View style={{ flex: 1, backgroundColor: "transparent" }}>
+          {/* <Animated.View
+            style={[styles.imageBackground, { opacity: fadeAnim }]}
+          >
+            <ImageBackground
+              source={require("./assets/images/pattern.jpg")}
+              style={styles.imageBackgroundContainer}
+              imageStyle={styles.imageStyle}
+              resizeMode="repeat"
+            />
+          </Animated.View> */}
+          <SafeAreaProvider style={styles.container}>
+            <SafeAreaView style={styles.safeArea}>
+              <KeyboardAvoidingView
+                style={styles.keyboardAvoidingView}
+                behavior="padding"
+              >
+                <View style={styles.gameContainer}>
+                  <StackNavigator />
+                  <NavigationHandler />
+                  <StatusBar style="auto" />
+                </View>
+              </KeyboardAvoidingView>
+            </SafeAreaView>
+          </SafeAreaProvider>
+          <Countdown />
+        </View>
+      </NavigationContainer>
     </GameProvider>
   );
 }
@@ -122,7 +163,6 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     alignItems: "stretch",
     justifyContent: "center",
-    // paddingBottom: 60,
   },
   imageBackground: {
     position: "absolute",
@@ -162,6 +202,5 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     justifyContent: "center",
     width: "100%",
-    // paddingBottom: 60,
   },
 });
