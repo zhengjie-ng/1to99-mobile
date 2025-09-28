@@ -7,25 +7,14 @@ import Header from "../components/Header";
 import Board from "../components/Board";
 
 function GameFinished() {
-  const {
-    gameHistory,
-    quitGame,
-    backToLobby,
-    restartGame,
-    gameRoom,
-    // playerName,
-  } = useGame();
+  const { gameHistory, quitGame, backToLobby, restartGame, gameRoom } =
+    useGame();
   const [timeLeft, setTimeLeft] = useState(20);
   const [timerActive, setTimerActive] = useState(true);
   const scrollViewRef = useRef(null);
 
   const lastTurn = gameHistory[gameHistory.length - 1];
   const loser = lastTurn ? lastTurn.playerName : "Unknown";
-
-  // const currentPlayer = gameRoom?.players?.find((p) => p.name === playerName);
-  // const isHost =
-  //   currentPlayer &&
-  //   (currentPlayer.isHost || currentPlayer.id === gameRoom.hostId);
 
   // Auto-scroll to the losing player
   useEffect(() => {
@@ -77,11 +66,6 @@ function GameFinished() {
     };
   }, []);
 
-  // const handleBackToLobby = () => {
-  //   setTimerActive(false);
-  //   backToLobby();
-  // };
-
   const handleQuitGame = () => {
     setTimerActive(false);
     quitGame();
@@ -93,14 +77,44 @@ function GameFinished() {
     backToLobby();
   };
 
+  if (!gameRoom) {
+    return (
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          flex: 1,
+          gap: 20,
+        }}
+      >
+        <Header style={{ fontSize: 40 }}>Game Over!</Header>
+        <Board style={{ minHeight: 0, width: "90%", margin: 0 }}>
+          <Header style={{ fontSize: 30, color: Colors.GRAY }}>
+            {loser} <Text style={{ color: Colors.EXIT }}>Lost!</Text>
+          </Header>
+        </Board>
+        <Board style={{ minHeight: 0, width: "90%" }}>
+          <Header style={{ fontSize: 20, color: Colors.GRAY }}>
+            Secret Number:
+            <Text style={{ color: Colors.EXIT }}> {lastTurn?.guess}</Text>
+          </Header>
+          <Header style={{ fontSize: 20, color: Colors.GRAY }}>
+            Total Guesses: {gameHistory.length}
+          </Header>
+        </Board>
+        <View style={{ gap: 10, width: "90%", marginTop: 10 }}>
+          <Button onPress={handleQuitGame}>Back to Menu</Button>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View
       style={{
         justifyContent: "flex-start",
         alignItems: "center",
-        // marginTop: 10,
         flex: 1,
-        // backgroundColor: "blue",
         gap: 5,
       }}
     >
@@ -135,15 +149,11 @@ function GameFinished() {
       <Board
         style={{
           width: "90%",
-          // height: 360,
           minHeight: 0,
           flex: 1,
           justifyContent: "start",
           gap: 5,
-          // paddingTop: 20,
-          // paddingBottom: 20,
           margin: 0,
-          // backgroundColor: "blue",
         }}
       >
         <ScrollView
@@ -193,14 +203,6 @@ function GameFinished() {
       </Board>
 
       <View style={{ gap: 10, width: "90%", marginTop: 10 }}>
-        {/* {isHost && (
-          <Button
-            onPress={handleRestartGame}
-            style={{ backgroundColor: Colors.PRIMARY }}
-          >
-            Restart Game (New Players Can Join)
-          </Button>
-        )} */}
         <Button onPress={handleRestartGame}>Back to Lobby</Button>
         <Button
           onPress={handleQuitGame}

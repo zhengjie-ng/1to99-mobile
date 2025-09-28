@@ -139,12 +139,16 @@ export function GameProvider({ children }) {
         // Set to lobby state for any player who receives this message and isn't already in a game
         if (
           message.gameRoom &&
-          (state.gameState === "MENU" || state.gameState === "CAMERA" || !state.gameRoom)
+          (state.gameState === "MENU" ||
+            state.gameState === "CAMERA" ||
+            !state.gameRoom)
         ) {
           console.log("Setting game state to LOBBY");
           dispatch({ type: "SET_GAME_STATE", payload: "LOBBY" });
           // Subscribe to personal topic for the joining player
-          const joinedPlayer = message.gameRoom.players.find(p => p.name === state.playerName);
+          const joinedPlayer = message.gameRoom.players.find(
+            (p) => p.name === state.playerName
+          );
           if (joinedPlayer) {
             subscribeToUserTopic(joinedPlayer.id);
           }
@@ -156,7 +160,9 @@ export function GameProvider({ children }) {
         dispatch({ type: "SET_GAME_ROOM", payload: message.gameRoom });
         dispatch({ type: "SET_GAME_STATE", payload: "LOBBY" });
         // Subscribe to personal topic for the player who just joined
-        const currentPlayer = message.gameRoom.players.find(p => p.name === state.playerName);
+        const currentPlayer = message.gameRoom.players.find(
+          (p) => p.name === state.playerName
+        );
         if (currentPlayer) {
           subscribeToUserTopic(currentPlayer.id);
         }
@@ -213,13 +219,19 @@ export function GameProvider({ children }) {
         // Unsubscribe from room topic since player is no longer part of the game
         if (state.gameRoom) {
           WebSocketService.unsubscribe(`/topic/room.${state.gameRoom.roomId}`);
-          console.log(`Unsubscribed from room topic: /topic/room.${state.gameRoom.roomId}`);
+          console.log(
+            `Unsubscribed from room topic: /topic/room.${state.gameRoom.roomId}`
+          );
 
           // Also unsubscribe from personal topic
-          const currentPlayer = state.gameRoom.players?.find(p => p.name === state.playerName);
+          const currentPlayer = state.gameRoom.players?.find(
+            (p) => p.name === state.playerName
+          );
           if (currentPlayer) {
             WebSocketService.unsubscribe(`/topic/user.${currentPlayer.id}`);
-            console.log(`Unsubscribed from user topic: /topic/user.${currentPlayer.id}`);
+            console.log(
+              `Unsubscribed from user topic: /topic/user.${currentPlayer.id}`
+            );
           }
         }
         // Show error message and return to main menu
@@ -232,7 +244,6 @@ export function GameProvider({ children }) {
         // Another player was removed - just update the room
         dispatch({ type: "SET_GAME_ROOM", payload: message.gameRoom });
         break;
-
 
       case "ERROR":
         console.log("Received ERROR message:", message.message);
@@ -387,13 +398,19 @@ export function GameProvider({ children }) {
 
       // Unsubscribe from room topic
       WebSocketService.unsubscribe(`/topic/room.${state.gameRoom.roomId}`);
-      console.log(`Unsubscribed from room topic: /topic/room.${state.gameRoom.roomId}`);
+      console.log(
+        `Unsubscribed from room topic: /topic/room.${state.gameRoom.roomId}`
+      );
 
       // Also unsubscribe from personal topic if we have player info
-      const currentPlayer = state.gameRoom.players?.find(p => p.name === state.playerName);
+      const currentPlayer = state.gameRoom.players?.find(
+        (p) => p.name === state.playerName
+      );
       if (currentPlayer) {
         WebSocketService.unsubscribe(`/topic/user.${currentPlayer.id}`);
-        console.log(`Unsubscribed from user topic: /topic/user.${currentPlayer.id}`);
+        console.log(
+          `Unsubscribed from user topic: /topic/user.${currentPlayer.id}`
+        );
       }
     }
     // Reset local state immediately
@@ -418,7 +435,6 @@ export function GameProvider({ children }) {
       console.log("Sent removePlayer message for player:", playerName);
     }
   };
-
 
   const backFromCameraToJoin = () => {
     dispatch({ type: "SET_SHOULD_SHOW_JOIN_MODE", payload: true });

@@ -5,7 +5,7 @@ import { Colors } from "../styles/colors";
 import Button from "../components/Button";
 import Header from "../components/Header";
 
-function MainMenu() {
+function MainMenu({ navigation }) {
   const [roomId, setRoomId] = useState("");
   const [mode, setMode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
