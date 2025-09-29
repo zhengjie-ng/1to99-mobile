@@ -10,7 +10,6 @@ import {
 import { useRef, useEffect } from "react";
 import { Audio } from "expo-av";
 import { GameProvider, useGame } from "./context/GameContext";
-import soundService from "./services/SoundService";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { Poppins_400Regular } from "@expo-google-fonts/poppins";
@@ -19,6 +18,7 @@ import { Colors } from "./styles/colors";
 import Countdown from "./screens/Countdown";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import StackNavigator from "./navigation/StackNavigator";
+import Sounds from "./utilities/sounds";
 
 function NavigationHandler() {
   const navigation = useNavigation();
@@ -55,13 +55,14 @@ function NavigationHandler() {
   return null;
 }
 
+Sounds.playBgm();
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     DaysOne_400Regular,
   });
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const sound = useRef(null);
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -72,52 +73,6 @@ export default function App() {
       }).start();
     }
   }, [fontsLoaded]);
-
-  // Setup background music
-  useEffect(() => {
-    const setupAudio = async () => {
-      try {
-        // Set audio mode for background playback
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: false,
-          staysActiveInBackground: true,
-          playsInSilentModeIOS: true,
-          shouldDuckAndroid: true,
-          playThroughEarpieceAndroid: false,
-        });
-
-        // Load and play background music
-        const { sound: bgmSound } = await Audio.Sound.createAsync(
-          require("./sounds/bgm.mp3"),
-          {
-            isLooping: true,
-            volume: 0.3, // Set volume to 30% (not too loud)
-            shouldPlay: true, // Auto-play when loaded
-          }
-        );
-
-        sound.current = bgmSound;
-
-        // Ensure it's playing
-        const status = await bgmSound.getStatusAsync();
-        if (!status.isPlaying) {
-          await bgmSound.playAsync();
-        }
-      } catch (error) {
-        console.log("Error loading background music:", error);
-      }
-    };
-
-    setupAudio();
-
-    // Cleanup function
-    return () => {
-      if (sound.current) {
-        sound.current.unloadAsync();
-      }
-      soundService.cleanup();
-    };
-  }, []);
 
   if (!fontsLoaded)
     return <ActivityIndicator size="large" color={Colors.PRIMARY} />;

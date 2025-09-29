@@ -1,11 +1,11 @@
 import { Pressable, Text, StyleSheet } from "react-native";
 import { Colors } from "../styles/colors";
-import soundService from "../services/SoundService";
+import Sounds from "../utilities/sounds";
 
 function Button({ children, onPress, style }) {
   const handlePress = (event) => {
     // Play click sound (don't await to avoid blocking UI)
-    soundService.playClickSound();
+    Sounds.buttonDefault();
 
     // Execute the original onPress function with the event parameter
     if (onPress) {

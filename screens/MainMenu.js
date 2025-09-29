@@ -143,7 +143,7 @@ function MainMenu({ navigation }) {
         </View>
       ) : (
         <View style={styles.joinModeContainer}>
-          {mode === "join" && (
+          {/* {mode === "join" && (
             <View style={styles.textInputView}>
               <Text style={styles.label}>Name:</Text>
               <TextInput
@@ -153,7 +153,7 @@ function MainMenu({ navigation }) {
                 placeholder="Enter your name"
               />
             </View>
-          )}
+          )} */}
 
           {mode === "join" && (
             <View style={styles.textInputView}>

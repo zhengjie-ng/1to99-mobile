@@ -60,7 +60,8 @@
           }
         }
       ],
-      "expo-barcode-scanner"
+      "expo-barcode-scanner",
+      "expo-audio"
     ]
   }
 }
