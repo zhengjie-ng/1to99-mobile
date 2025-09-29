@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import WebSocketService from "../services/WebSocketService";
+import Sounds from "../utilities/sounds";
 
 const GameContext = createContext();
 
@@ -135,6 +136,13 @@ export function GameProvider({ children }) {
       case "PLAYER_JOINED":
         console.log("Processing PLAYER_JOINED message:", message);
         console.log("Current game state:", state.gameState);
+        // Clear join timeout if it exists
+        if (window.joinRoomTimeout) {
+          clearTimeout(window.joinRoomTimeout);
+          window.joinRoomTimeout = null;
+        }
+        // Play join sound when a new player joins
+        Sounds.join();
         dispatch({ type: "SET_GAME_ROOM", payload: message.gameRoom });
         // Set to lobby state for any player who receives this message and isn't already in a game
         if (
@@ -157,6 +165,11 @@ export function GameProvider({ children }) {
 
       case "ROOM_JOINED":
         console.log("Processing ROOM_JOINED message:", message);
+        // Clear join timeout if it exists
+        if (window.joinRoomTimeout) {
+          clearTimeout(window.joinRoomTimeout);
+          window.joinRoomTimeout = null;
+        }
         dispatch({ type: "SET_GAME_ROOM", payload: message.gameRoom });
         dispatch({ type: "SET_GAME_STATE", payload: "LOBBY" });
         // Subscribe to personal topic for the player who just joined
@@ -186,10 +199,14 @@ export function GameProvider({ children }) {
         break;
 
       case "GUESS_MADE":
+        // Play pick sound when a guess is made
+        Sounds.pick();
         dispatch({ type: "SET_GAME_ROOM", payload: message.gameRoom });
         dispatch({ type: "ADD_GAME_TURN", payload: message.lastTurn });
 
         if (message.gameRoom.state === "FINISHED") {
+          // Play finished sound when game ends
+          Sounds.finished();
           dispatch({ type: "SET_GAME_STATE", payload: "FINISHED" });
         } else {
           // Check if range is narrowed to single number and auto-guess for current player
@@ -274,11 +291,15 @@ export function GameProvider({ children }) {
   const startCountdown = () => {
     let count = 5;
     dispatch({ type: "START_COUNTDOWN", payload: count });
+    // Play countdown sound for initial count
+    Sounds.countdown();
 
     const interval = setInterval(() => {
       count -= 1;
       if (count > 0) {
         dispatch({ type: "UPDATE_COUNTDOWN", payload: count });
+        // Play countdown sound for each remaining second
+        Sounds.countdown();
       } else {
         dispatch({ type: "END_COUNTDOWN" });
         clearInterval(interval);
@@ -347,14 +368,18 @@ export function GameProvider({ children }) {
       console.log("Sent joinRoom message");
 
       // Set a timeout to handle case where no response comes back
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
+        // Only show error if still in MENU state AND no room was found
         if (state.gameState === "MENU" && !state.gameRoom) {
           dispatch({
             type: "SET_ERROR",
             payload: "Room not found - Please enter an existing Room ID",
           });
         }
-      }, 3000);
+      }, 5000); // Increased timeout to 5 seconds
+
+      // Store timeout ID to potentially clear it later
+      window.joinRoomTimeout = timeoutId;
     } catch (error) {
       console.error("Failed to send joinRoom message:", error);
       dispatch({
