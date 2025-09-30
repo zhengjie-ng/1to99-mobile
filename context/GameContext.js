@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import WebSocketService from "../services/WebSocketService";
 import Sounds from "../utilities/sounds";
 
@@ -98,7 +99,30 @@ function gameReducer(state, action) {
 export function GameProvider({ children }) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
+  // Helper function to set player name and save to AsyncStorage
+  const setPlayerNameWithStorage = async (name) => {
+    dispatch({ type: "SET_PLAYER_NAME", payload: name });
+    try {
+      await AsyncStorage.setItem("playerName", name);
+    } catch (error) {
+      console.error("Failed to save player name:", error);
+    }
+  };
+
+  // Load saved player name on app start
   useEffect(() => {
+    const loadSavedPlayerName = async () => {
+      try {
+        const savedPlayerName = await AsyncStorage.getItem("playerName");
+        if (savedPlayerName) {
+          dispatch({ type: "SET_PLAYER_NAME", payload: savedPlayerName });
+        }
+      } catch (error) {
+        console.error("Failed to load saved player name:", error);
+      }
+    };
+
+    loadSavedPlayerName();
     connectWebSocket();
     return () => WebSocketService.disconnect();
   }, []);
@@ -309,7 +333,7 @@ export function GameProvider({ children }) {
 
   const createRoom = (playerName) => {
     console.log("Creating room for player:", playerName);
-    dispatch({ type: "SET_PLAYER_NAME", payload: playerName });
+    setPlayerNameWithStorage(playerName);
 
     // Check if WebSocket is connected before sending
     if (!state.connected) {
@@ -471,7 +495,7 @@ export function GameProvider({ children }) {
   };
 
   const setPlayerName = (name) => {
-    dispatch({ type: "SET_PLAYER_NAME", payload: name });
+    setPlayerNameWithStorage(name);
   };
 
   const value = {
