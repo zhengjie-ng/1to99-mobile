@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, TextInput, Alert, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+  KeyboardAvoidingView,
+} from "react-native";
 import { useState, useEffect } from "react";
 import { useGame } from "../context/GameContext";
 import { Colors } from "../styles/colors";
@@ -124,82 +131,74 @@ function MainMenu() {
     <View style={styles.screenContainer}>
       <Background />
       <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding">
+        <KeyboardAvoidingView
+          style={styles.keyboardAvoidingView}
+          behavior="padding"
+        >
           <View style={styles.mainView}>
-      <Header>1 to 99</Header>
-      <Text style={styles.subHeader}>
-        Guess Everything Except the Secret Number
-      </Text>
+            <Header>1 to 99</Header>
+            <Text style={styles.subHeader}>
+              Guess Everything Except the Secret Number
+            </Text>
 
-      {!mode && (
-        <View style={styles.textInputView}>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            style={styles.textInput}
-            value={localPlayerName}
-            onChangeText={setLocalPlayerName}
-            placeholder="Enter your name"
-          />
-        </View>
-      )}
-
-      {!mode ? (
-        <View style={styles.buttonView}>
-          <Button
-            style={{ paddingVertical: 20 }}
-            onPress={handleCreate}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Creating..." : "Create Room"}
-          </Button>
-          <Button style={{ paddingVertical: 20 }} onPress={handleJoin}>
-            Join Room
-          </Button>
-        </View>
-      ) : (
-        <View style={styles.joinModeContainer}>
-          {/* {mode === "join" && (
-            <View style={styles.textInputView}>
-              <Text style={styles.label}>Name:</Text>
-              <TextInput
-                style={styles.textInput}
-                value={localPlayerName}
-                onChangeText={setLocalPlayerName}
-                placeholder="Enter your name"
-              />
-            </View>
-          )} */}
-
-          {mode === "join" && (
-            <View style={styles.textInputView}>
-              <Text style={styles.label}>Room:</Text>
-              <TextInput
-                style={styles.textInput}
-                value={roomId}
-                onChangeText={setRoomId}
-                keyboardType="number-pad"
-                returnKeyType="done"
-                placeholder="Enter Room ID"
-              />
-            </View>
-          )}
-
-          <View style={styles.buttonView}>
-            <Button onPress={handleSubmit} disabled={isSubmitting}>
-              {mode === "create" ? "Create Room" : "Join Room"}
-            </Button>
-            {mode === "join" && (
-              <Button onPress={handleQRScan}>Scan QR Code</Button>
+            {!mode && (
+              <View style={styles.textInputView}>
+                <Text style={styles.label}>Name:</Text>
+                <TextInput
+                  style={styles.textInput}
+                  value={localPlayerName}
+                  onChangeText={setLocalPlayerName}
+                  placeholder="Enter your name"
+                  maxLength={12}
+                />
+              </View>
             )}
-            <Button
-              onPress={() => setMode("")}
-              style={{ backgroundColor: Colors.DISABLE }}
-            >
-              Back
-            </Button>
-          </View>
-        </View>
-      )}
+
+            {!mode ? (
+              <View style={styles.buttonView}>
+                <Button
+                  style={{ paddingVertical: 20 }}
+                  onPress={handleCreate}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Creating..." : "Create Room"}
+                </Button>
+                <Button style={{ paddingVertical: 20 }} onPress={handleJoin}>
+                  Join Room
+                </Button>
+              </View>
+            ) : (
+              <View style={styles.joinModeContainer}>
+                {mode === "join" && (
+                  <View style={styles.textInputView}>
+                    <Text style={styles.label}>Room:</Text>
+                    <TextInput
+                      style={styles.textInput}
+                      value={roomId}
+                      onChangeText={setRoomId}
+                      keyboardType="number-pad"
+                      returnKeyType="done"
+                      placeholder="Enter Room ID"
+                    />
+                  </View>
+                )}
+
+                <View style={styles.buttonView}>
+                  <Button onPress={handleSubmit} disabled={isSubmitting}>
+                    {mode === "create" ? "Create Room" : "Join Room"}
+                  </Button>
+                  {mode === "join" && (
+                    <Button onPress={handleQRScan}>Scan QR Code</Button>
+                  )}
+                  <Button
+                    onPress={() => setMode("")}
+                    style={{ backgroundColor: Colors.DISABLE }}
+                  >
+                    Back
+                  </Button>
+                </View>
+              </View>
+            )}
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
