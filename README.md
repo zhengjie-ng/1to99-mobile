@@ -11,11 +11,13 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Core React Native Expo Stack
 
 - **React Native 0.81.4** - Cross-platform mobile development framework that allows building native mobile apps using React
+
   - Enables code sharing between iOS and Android platforms
   - Provides native performance with JavaScript development experience
   - Access to platform-specific APIs and native modules
 
 - **Expo ~54.0.9** - Comprehensive development platform and toolchain for React Native
+
   - **Expo CLI**: Command-line tools for development, building, and deployment
   - **Expo SDK**: Pre-built native modules and APIs (camera, audio, storage, etc.)
   - **Expo Go**: Development client for testing on real devices
@@ -39,6 +41,7 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Real-time Communication
 
 - **@stomp/stompjs 7.2.0** - STOMP protocol client for WebSocket communication
+
   - Simple Text Oriented Message Protocol over WebSockets
   - Message broker integration for pub/sub messaging
   - Automatic reconnection and heartbeat management
@@ -53,21 +56,19 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Device Integration & Features
 
 - **@react-native-async-storage/async-storage 2.2.0** - Persistent local storage
+
   - **Key Features:**
     - Asynchronous, persistent key-value storage system
     - Data persists across app launches and device reboots
-    - Support for storing strings, objects (JSON serialized), and binary data
-    - Automatic encryption on iOS (Keychain) and Android (SharedPreferences)
   - **Use Cases in App:**
-    - Storing player names for auto-login
-    - Caching game preferences and settings
-    - Offline data storage for game history
+    - Storing player names for auto input
   - **Learning Benefits:**
     - Understanding mobile data persistence patterns
     - Working with async/await patterns in React Native
     - Managing app state across sessions
 
 - **expo-camera ~17.0.8** - Camera integration with built-in QR code scanning
+
   - **Key Features:**
     - Access to device front and rear cameras with `CameraView` component
     - Real-time camera preview with customizable UI overlays
@@ -109,6 +110,7 @@ A real-time multiplayer number guessing game mobile application built with React
 ### UI & Animation
 
 - **react-native-reanimated ~4.1.1** - High-performance animation library
+
   - Native-driven animations for 60fps performance
   - Gesture handling and interaction animations
   - Shared element transitions between screens
@@ -140,18 +142,21 @@ A real-time multiplayer number guessing game mobile application built with React
 ## Learning Benefits of This Stack
 
 ### For React Native Development:
+
 - **Cross-platform Skills**: Learn once, deploy to both iOS and Android
 - **Modern JavaScript/React**: Advanced React patterns with hooks and context
 - **Native Integration**: Understanding how to bridge JavaScript and native code
 - **Performance Optimization**: Native animations and efficient rendering techniques
 
 ### For Mobile Development:
+
 - **Device APIs**: Camera, storage, audio, and sensor integration
 - **Platform Guidelines**: iOS and Android design pattern implementation
 - **App Lifecycle**: Managing background states, permissions, and memory
 - **Real-world Features**: QR scanning, persistent storage, audio playback
 
 ### For Real-time Applications:
+
 - **WebSocket Communication**: Bidirectional real-time messaging
 - **State Synchronization**: Keeping multiple clients in sync
 - **Connection Management**: Handling network issues and reconnection
@@ -301,7 +306,7 @@ This multi-topic approach ensures players receive relevant updates while maintai
    Want to test immediately without setting up your own backend? Use our hosted backend:
 
    ```env
-   EXPO_PUBLIC_WS_MODE=production
+   EXPO_PUBLIC_WS_MODE=local
    EXPO_PUBLIC_WS_URL_PRODUCTION=https://1to99-backend.zhengjie.app
    ```
 
@@ -339,6 +344,7 @@ The app supports different WebSocket connection modes:
 - **Availability**: 24/7 for development and testing
 
 **Benefits of using the live backend:**
+
 - ✅ **No Setup Required** - Start developing immediately
 - ✅ **Always Available** - No need to manage your own server
 - ✅ **Real Multiplayer** - Test with friends across different devices
