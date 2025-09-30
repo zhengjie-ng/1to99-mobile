@@ -3,6 +3,7 @@ import { useState, useRef } from "react";
 
 import { CameraView, useCameraPermissions } from "expo-camera";
 import Button from "../components/Button";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useGame } from "../context/GameContext";
 
 function CameraScreen({ navigation, onBack, playerName }) {
@@ -92,10 +93,12 @@ function CameraScreen({ navigation, onBack, playerName }) {
   if (!permission) {
     console.log("🎥 No permission object yet");
     return (
-      <View style={[styles.permissionContainer, { backgroundColor: "white" }]}>
-        <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
-          Loading camera permissions...
-        </Text>
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.permissionContainer]}>
+          <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
+            Loading camera permissions...
+          </Text>
+        </SafeAreaView>
       </View>
     );
   }
@@ -103,17 +106,20 @@ function CameraScreen({ navigation, onBack, playerName }) {
   // If permission is not granted
   if (!permission.granted) {
     return (
-      <View style={[styles.permissionContainer]}>
-        <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
-          We need your permission to show the camera.
-        </Text>
-        <Button onPress={requestPermission}>Grant Permission</Button>
+      <View style={{ flex: 1 }}>
+        <SafeAreaView style={[styles.permissionContainer]}>
+          <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
+            We need your permission to show the camera.
+          </Text>
+          <Button onPress={requestPermission}>Grant Permission</Button>
+        </SafeAreaView>
       </View>
     );
   }
 
   return (
-    <View style={styles.fullScreenContainer}>
+    <View style={{ flex: 1 }}>
+      {/* <SafeAreaView style={styles.fullScreenContainer}> */}
       {!scanned && (
         <CameraView
           style={styles.fullScreenCamera}
@@ -126,6 +132,7 @@ function CameraScreen({ navigation, onBack, playerName }) {
           Back
         </Button>
       </View>
+      {/* </SafeAreaView> */}
     </View>
   );
 }

@@ -13,6 +13,8 @@ import Header from "../components/Header";
 import Board from "../components/Board";
 import QRCode from "react-qr-code";
 import { useRef } from "react";
+import Background from "../components/Background";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function GameLobby() {
   const { gameRoom, playerName, startGame, quitGame, removePlayer } = useGame();
@@ -26,8 +28,11 @@ function GameLobby() {
 
   if (!gameRoom)
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Header style={{ fontSize: 24 }}>Loading lobby...</Header>
+      <View style={{ flex: 1, position: "relative" }}>
+        <Background />
+        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+          <Header style={{ fontSize: 24 }}>Loading lobby...</Header>
+        </SafeAreaView>
       </View>
     );
 
@@ -37,8 +42,11 @@ function GameLobby() {
     (currentPlayer.isHost || currentPlayer.id === gameRoom.hostId);
 
   return (
-    <View style={styles.mainView}>
-      <View style={styles.qrContainer}>
+    <View style={styles.screenContainer}>
+      <Background />
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.mainView}>
+          <View style={styles.qrContainer}>
         <Text style={styles.qrLabel}>
           Scan QR code or enter Room ID to join
         </Text>
@@ -138,12 +146,21 @@ function GameLobby() {
         <Button onPress={quitGame} style={{ backgroundColor: Colors.EXIT }}>
           Leave Game
         </Button>
-      </View>
+        </View>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    position: "relative",
+  },
+  safeArea: {
+    flex: 1,
+  },
   mainView: {
     justifyContent: "space-between",
     alignItems: "center",

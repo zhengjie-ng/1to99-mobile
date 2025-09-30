@@ -2,8 +2,10 @@ import { Pressable, Text, StyleSheet } from "react-native";
 import { Colors } from "../styles/colors";
 import Sounds from "../utilities/sounds";
 
-function Button({ children, onPress, style }) {
+function Button({ children, onPress, style, disabled }) {
   const handlePress = (event) => {
+    if (disabled) return;
+
     // Play click sound (don't await to avoid blocking UI)
     Sounds.buttonDefault();
 
@@ -14,18 +16,12 @@ function Button({ children, onPress, style }) {
   };
   return (
     <Pressable
-      // style={styles.buttonContainer}
       style={({ pressed }) => [
         styles.buttonContainer,
         style,
-        pressed && styles.buttonPressed,
+        pressed && !disabled && styles.buttonPressed,
+        disabled && styles.buttonDisabled,
       ]}
-      // If you want to handle iOS/Android differently
-      //   style={({ pressed }) => [
-      //     styles.buttonContainer,
-      //     pressed && Platform.OS === "ios" && styles.buttonPressed,
-      //   ]}
-      //   android_ripple={{ color: "#ffe15940", foreground: true }}
       onPress={handlePress}
     >
       <Text style={styles.buttonText}>{children}</Text>
@@ -61,6 +57,10 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.8,
     transform: [{ translateY: 2 }],
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+    backgroundColor: Colors.DISABLE,
   },
 });
 
