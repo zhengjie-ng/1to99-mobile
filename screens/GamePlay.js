@@ -152,32 +152,45 @@ function GamePlay() {
             </Header>
           )}
         </Board>
-        {isMyTurn && !isSingleNumberLeft && (
-          <Board
-            style={{
-              width: "90%",
-              minHeight: 0,
-              height: 100,
-              justifyContent: "center",
-              gap: 2,
-              paddingTop: 20,
-              paddingBottom: 20,
-              flexDirection: "row",
-              margin: 0,
-            }}
-          >
-            <TextInput
-              style={styles.textInput}
-              value={guess}
-              onChangeText={setGuess}
-              keyboardType="number-pad"
-              returnKeyType="done"
-              min={gameRoom.minRange}
-              max={gameRoom.maxRange}
-              placeholder={`Guess (${gameRoom.minRange}-${gameRoom.maxRange})`}
-            />
-            <Button onPress={handleSubmit}>Guess</Button>
-          </Board>
+        {!isSingleNumberLeft && (
+          <View style={{ position: "relative", width: "90%" }}>
+            <Board
+              style={{
+                width: "100%",
+                minHeight: 0,
+                height: 100,
+                justifyContent: "center",
+                gap: 2,
+                paddingTop: 20,
+                paddingBottom: 20,
+                flexDirection: "row",
+                margin: 0,
+              }}
+            >
+              <TextInput
+                style={[
+                  styles.textInput,
+                  !isMyTurn && styles.textInputDisabled,
+                ]}
+                value={guess}
+                onChangeText={isMyTurn ? setGuess : undefined}
+                keyboardType="number-pad"
+                returnKeyType="done"
+                min={gameRoom.minRange}
+                max={gameRoom.maxRange}
+                placeholder={`Guess (${gameRoom.minRange}-${gameRoom.maxRange})`}
+                editable={isMyTurn}
+              />
+              <Button onPress={handleSubmit} disabled={!isMyTurn}>
+                Guess
+              </Button>
+            </Board>
+            {!isMyTurn && (
+              <View style={styles.notYourTurnOverlay}>
+                <Text style={styles.notYourTurnText}>Not Your Turn Yet</Text>
+              </View>
+            )}
+          </View>
         )}
         <Board
           style={{
@@ -300,6 +313,28 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     fontSize: 20,
     width: 180,
+  },
+  textInputDisabled: {
+    backgroundColor: "#f5f5f5",
+    borderColor: Colors.DISABLE,
+    color: Colors.GRAY,
+  },
+  notYourTurnOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  notYourTurnText: {
+    color: "white",
+    fontSize: 24,
+    fontFamily: "DaysOne_400Regular",
+    textAlign: "center",
   },
   playerRow: {
     flexDirection: "row",
