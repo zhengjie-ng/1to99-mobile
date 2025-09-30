@@ -9,17 +9,31 @@ class WebSocketService {
 
     // Get WebSocket URL from environment variables
     const wsMode = process.env.EXPO_PUBLIC_WS_MODE || "local";
-    const localUrl = process.env.EXPO_PUBLIC_WS_URL_LOCAL || "http://localhost:8080";
+    const localUrl =
+      process.env.EXPO_PUBLIC_WS_URL_LOCAL || "http://localhost:8080";
     const ngrokUrl = process.env.EXPO_PUBLIC_WS_URL_NGROK;
+    const productionUrl = process.env.EXPO_PUBLIC_WS_URL_PRODUCTION;
 
     console.log("Environment variables:", {
       wsMode: process.env.EXPO_PUBLIC_WS_MODE,
       localUrl: process.env.EXPO_PUBLIC_WS_URL_LOCAL,
-      ngrokUrl: process.env.EXPO_PUBLIC_WS_URL_NGROK
+      ngrokUrl: process.env.EXPO_PUBLIC_WS_URL_NGROK,
+      productionUrl: process.env.EXPO_PUBLIC_WS_URL_PRODUCTION,
     });
 
     // Use URLs directly from environment variables and add /ws
-    this.wsUrl = wsMode === "local" ? localUrl + "/ws" : ngrokUrl + "/ws";
+    switch (wsMode) {
+      case "local":
+        this.wsUrl = localUrl + "/ws";
+        break;
+      case "production":
+        this.wsUrl = productionUrl + "/ws";
+        break;
+      case "ngrok":
+      default:
+        this.wsUrl = ngrokUrl + "/ws";
+        break;
+    }
     console.log(`WebSocket mode: ${wsMode}, URL: ${this.wsUrl}`);
   }
 
