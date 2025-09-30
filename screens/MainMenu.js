@@ -1,11 +1,13 @@
-import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
+import { View, Text, StyleSheet, TextInput, Alert, KeyboardAvoidingView } from "react-native";
 import { useState, useEffect } from "react";
 import { useGame } from "../context/GameContext";
 import { Colors } from "../styles/colors";
 import Button from "../components/Button";
 import Header from "../components/Header";
+import Background from "../components/Background";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-function MainMenu({ navigation }) {
+function MainMenu() {
   const [roomId, setRoomId] = useState("");
   const [mode, setMode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,8 +58,13 @@ function MainMenu({ navigation }) {
 
     if (!localPlayerName.trim() || isSubmitting) return;
 
+    // Set submitting immediately for instant feedback
     setIsSubmitting(true);
-    createRoom(localPlayerName.trim());
+
+    // Use setTimeout to ensure UI updates immediately
+    setTimeout(() => {
+      createRoom(localPlayerName.trim());
+    }, 0);
 
     // Reset submitting state after a delay
     setTimeout(() => setIsSubmitting(false), 3000);
@@ -114,7 +121,11 @@ function MainMenu({ navigation }) {
   };
 
   return (
-    <View style={styles.mainView}>
+    <View style={styles.screenContainer}>
+      <Background />
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding">
+          <View style={styles.mainView}>
       <Header>1 to 99</Header>
       <Text style={styles.subHeader}>
         Guess Everything Except the Secret Number
@@ -134,8 +145,12 @@ function MainMenu({ navigation }) {
 
       {!mode ? (
         <View style={styles.buttonView}>
-          <Button style={{ paddingVertical: 20 }} onPress={handleCreate}>
-            Create Room
+          <Button
+            style={{ paddingVertical: 20 }}
+            onPress={handleCreate}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Creating..." : "Create Room"}
           </Button>
           <Button style={{ paddingVertical: 20 }} onPress={handleJoin}>
             Join Room
@@ -185,11 +200,24 @@ function MainMenu({ navigation }) {
           </View>
         </View>
       )}
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    position: "relative",
+  },
+  safeArea: {
+    flex: 1,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   mainView: {
     justifyContent: "center",
     alignItems: "center",

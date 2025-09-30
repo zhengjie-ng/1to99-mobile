@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useGame } from "../context/GameContext";
 import Button from "../components/Button";
 import { Colors } from "../styles/colors";
+import Background from "../components/Background";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import Board from "../components/Board";
 
@@ -79,14 +81,16 @@ function GameFinished() {
 
   if (!gameRoom) {
     return (
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          flex: 1,
-          gap: 20,
-        }}
-      >
+      <View style={{ flex: 1, position: "relative" }}>
+        <Background />
+        <SafeAreaView
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            flex: 1,
+            gap: 20,
+          }}
+        >
         <Header style={{ fontSize: 40 }}>Game Over!</Header>
         <Board style={{ minHeight: 0, width: "90%", margin: 0 }}>
           <Header style={{ fontSize: 30, color: Colors.GRAY }}>
@@ -105,19 +109,22 @@ function GameFinished() {
         <View style={{ gap: 10, width: "90%", marginTop: 10 }}>
           <Button onPress={handleQuitGame}>Back to Menu</Button>
         </View>
+        </SafeAreaView>
       </View>
     );
   }
 
   return (
-    <View
-      style={{
-        justifyContent: "flex-start",
-        alignItems: "center",
-        flex: 1,
-        gap: 5,
-      }}
-    >
+    <View style={{ flex: 1, position: "relative" }}>
+      <Background />
+      <SafeAreaView
+        style={{
+          justifyContent: "flex-start",
+          alignItems: "center",
+          flex: 1,
+          gap: 5,
+        }}
+      >
       <Header style={{ fontSize: 50 }}>Game Over!</Header>
       <Board style={{ minHeight: 0, width: "90%", margin: 0 }}>
         <Header style={{ fontSize: 40, color: Colors.GRAY }}>
@@ -211,6 +218,7 @@ function GameFinished() {
           Quit Game
         </Button>
       </View>
+      </SafeAreaView>
     </View>
   );
 }

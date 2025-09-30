@@ -14,7 +14,7 @@ function StackNavigator() {
         headerShown: false,
         contentStyle: { backgroundColor: "white" },
         animation: "fade_from_bottom",
-        animationDuration: 100,
+        animationDuration: 200,
       }}
     >
       <Stack.Screen name="MENU" component={MainMenu} />
