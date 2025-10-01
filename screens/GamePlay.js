@@ -115,8 +115,8 @@ function GamePlay() {
         }}
       >
         <View>
-          <Header style={{ fontSize: 38 }}>Do not pick the </Header>
-          <Header style={{ fontSize: 38 }}>Secret Number!</Header>
+          <Header style={{ fontSize: 32 }}>Do not pick the </Header>
+          <Header style={{ fontSize: 32 }}>Secret Number!</Header>
         </View>
 
         <Board
