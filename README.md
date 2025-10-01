@@ -60,6 +60,8 @@ A real-time multiplayer number guessing game mobile application built with React
   - **Key Features:**
     - Asynchronous, persistent key-value storage system
     - Data persists across app launches and device reboots
+    - Support for storing strings, objects (JSON serialized), and binary data
+    - Automatic encryption on iOS (Keychain) and Android (SharedPreferences)
   - **Use Cases in App:**
     - Storing player names for auto input
   - **Learning Benefits:**
@@ -132,8 +134,6 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Additional Development Tools
 
 - **expo-constants 18.0.9** - Access to system and app constants
-- **expo-splash-screen 31.0.10** - Custom splash screen management
-- **expo-status-bar 3.0.8** - Status bar appearance control
 - **react-native-safe-area-context 5.6.0** - Safe area handling for modern devices
 - **react-native-shadow-2 7.1.2** - Advanced shadow effects for UI elements
 - **react-native-svg 15.13.0** - Scalable vector graphics support (required by react-qr-code)
@@ -150,7 +150,7 @@ A real-time multiplayer number guessing game mobile application built with React
 
 ### For Mobile Development:
 
-- **Device APIs**: Camera, storage, audio, and sensor integration
+- **Device APIs**: Camera, storage and audio implementation
 - **Platform Guidelines**: iOS and Android design pattern implementation
 - **App Lifecycle**: Managing background states, permissions, and memory
 - **Real-world Features**: QR scanning, persistent storage, audio playback
