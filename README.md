@@ -11,32 +11,12 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Core React Native Expo Stack
 
 - **React Native 0.81.4** - Cross-platform mobile development framework that allows building native mobile apps using React
-
-  - Enables code sharing between iOS and Android platforms
-  - Provides native performance with JavaScript development experience
-  - Access to platform-specific APIs and native modules
-
 - **Expo ~54.0.9** - Comprehensive development platform and toolchain for React Native
-
-  - **Expo CLI**: Command-line tools for development, building, and deployment
-  - **Expo SDK**: Pre-built native modules and APIs (camera, audio, storage, etc.)
-  - **Expo Go**: Development client for testing on real devices
-  - **EAS Build**: Cloud build service for production apps
-  - **Over-the-Air Updates**: Push updates without app store submissions
-  - **Simplified Development**: No need for Xcode/Android Studio setup
-
 - **React 19.1.0** - JavaScript library for building user interfaces
-  - Component-based architecture for reusable UI elements
-  - State management with hooks (useState, useEffect, useContext)
-  - Virtual DOM for efficient rendering
 
 ### Navigation & State Management
 
 - **@react-navigation/native 7.1.17** - Navigation library for screen management
-  - Stack navigation for hierarchical screen transitions
-  - Automatic deep linking and URL handling
-  - Native navigation animations and gestures
-  - Type-safe navigation with TypeScript support
 
 ### Real-time Communication
 
@@ -56,72 +36,21 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Device Integration & Features
 
 - **@react-native-async-storage/async-storage 2.2.0** - Persistent local storage
-
-  - **Key Features:**
-    - Asynchronous, persistent key-value storage system
-    - Data persists across app launches and device reboots
-    - Support for storing strings, objects (JSON serialized), and binary data
-    - Automatic encryption on iOS (Keychain) and Android (SharedPreferences)
   - **Use Cases in App:**
     - Storing player names for auto input
-  - **Learning Benefits:**
-    - Understanding mobile data persistence patterns
-    - Working with async/await patterns in React Native
-    - Managing app state across sessions
 
 - **expo-camera ~17.0.8** - Camera integration with built-in QR code scanning
-
-  - **Key Features:**
-    - Access to device front and rear cameras with `CameraView` component
-    - Real-time camera preview with customizable UI overlays
-    - Built-in barcode and QR code scanning via `onBarcodeScanned` prop
-    - Photo and video capture capabilities
-    - Camera permission handling with `useCameraPermissions` hook
-    - Full-screen camera experience with overlay UI elements
   - **Implementation in App:**
     - `CameraView` component for full-screen QR scanning experience
     - `handleBarCodeScanned` function processes scanned room IDs
     - Permission management with user-friendly fallback UI
     - Scan validation to ensure only valid room IDs are accepted
     - Prevents duplicate scans with state management and refs
-  - **Learning Benefits:**
-    - Understanding device permission workflows and UX patterns
-    - Working with native device hardware APIs through React Native
-    - Implementing computer vision features in mobile apps
-    - Handling camera lifecycle, memory management, and scan state
-    - Creating intuitive camera UI with overlays and controls
-
+      
 - **expo-audio ~1.0.13** - Audio playback for game sounds
-  - **Key Features:**
-    - Play local and remote audio files
-    - Support for multiple audio formats (MP3, WAV, AAC, M4A)
-    - Background audio playback capabilities
-    - Audio session management and mixing
-    - Volume control and playback rate adjustment
   - **Use Cases in App:**
     - Background music during gameplay
-    - Sound effects for game events (join, guess, win/lose)
-    - Audio feedback for user interactions
-    - Ambient sounds for enhanced gaming experience
-  - **Learning Benefits:**
-    - Understanding mobile audio management
-    - Working with media assets in React Native
-    - Implementing responsive audio feedback systems
-    - Managing audio resources and memory
-
-### UI & Animation
-
-- **react-native-reanimated ~4.1.1** - High-performance animation library
-
-  - Native-driven animations for 60fps performance
-  - Gesture handling and interaction animations
-  - Shared element transitions between screens
-  - Complex animation sequences and timing functions
-
-- **react-native-gesture-handler ~2.28.0** - Native touch gesture system
-  - Platform-optimized gesture recognition
-  - Multi-touch and complex gesture support
-  - Integration with animation library for smooth interactions
+    - Sound effects for game events (join, guess)
 
 ### Design & Typography
 
@@ -306,7 +235,7 @@ This multi-topic approach ensures players receive relevant updates while maintai
    Want to test immediately without setting up your own backend? Use our hosted backend:
 
    ```env
-   EXPO_PUBLIC_WS_MODE=local
+   EXPO_PUBLIC_WS_MODE=production
    EXPO_PUBLIC_WS_URL_PRODUCTION=https://1to99-backend.zhengjie.app
    ```
 
@@ -362,7 +291,6 @@ Configure via environment variables in `.env` file.
 - **Real-time Multiplayer**: Synchronized gameplay across all devices
 - **Turn-based Guessing**: Visual turn indicators and guess validation
 - **Range Display**: Clear visualization of remaining number range
-- **Game History**: Track of all guesses made during the game
 
 ### User Experience Features
 
