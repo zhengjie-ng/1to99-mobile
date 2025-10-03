@@ -5,6 +5,8 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import Button from "../components/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGame } from "../context/GameContext";
+import { Colors } from "../styles/colors";
+import Header from "../components/Header";
 
 function CameraScreen({ navigation, onBack, playerName }) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -108,10 +110,18 @@ function CameraScreen({ navigation, onBack, playerName }) {
     return (
       <View style={{ flex: 1 }}>
         <SafeAreaView style={[styles.permissionContainer]}>
-          <Text style={[styles.permissionMessage, { fontSize: 20 }]}>
+          <Header style={[styles.permissionMessage, { fontSize: 20 }]}>
             We need your permission to show the camera.
-          </Text>
-          <Button onPress={requestPermission}>Grant Permission</Button>
+          </Header>
+          <View style={styles.permissionButtonsContainer}>
+            <Button onPress={requestPermission}>Grant Permission</Button>
+            <Button
+              onPress={handleBack}
+              style={{ backgroundColor: Colors.DISABLE }}
+            >
+              Back
+            </Button>
+          </View>
         </SafeAreaView>
       </View>
     );
@@ -142,10 +152,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 60,
   },
   permissionMessage: {
     textAlign: "center",
-    marginBottom: 8,
+    margin: 20,
+  },
+  permissionButtonsContainer: {
+    gap: 12,
+    width: "80%",
   },
   fullScreenContainer: {
     flex: 1,
