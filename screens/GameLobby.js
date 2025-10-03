@@ -5,6 +5,7 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  AppState,
 } from "react-native";
 import { useGame } from "../context/GameContext";
 import Button from "../components/Button";
@@ -12,7 +13,7 @@ import { Colors } from "../styles/colors";
 import Header from "../components/Header";
 import Board from "../components/Board";
 import QRCode from "react-qr-code";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import Background from "../components/Background";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -26,11 +27,28 @@ function GameLobby() {
     }
   };
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (nextAppState === "background" || nextAppState === "inactive") {
+        // Player is leaving the app, quit the game
+        if (gameRoom && playerName) {
+          quitGame();
+        }
+      }
+    });
+
+    return () => {
+      subscription?.remove();
+    };
+  }, [gameRoom, playerName, quitGame]);
+
   if (!gameRoom)
     return (
       <View style={{ flex: 1, position: "relative" }}>
         <Background />
-        <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <SafeAreaView
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <Header style={{ fontSize: 24 }}>Loading lobby...</Header>
         </SafeAreaView>
       </View>
@@ -47,106 +65,106 @@ function GameLobby() {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.mainView}>
           <View style={styles.qrContainer}>
-        <Text style={styles.qrLabel}>
-          Scan QR code or enter Room ID to join
-        </Text>
-        <View style={styles.qrCodeWrapper}>
-          <QRCode
-            value={gameRoom.roomId.toString()}
-            size={140}
-            bgColor="white"
-            fgColor="black"
-          />
-        </View>
-        <Text style={styles.roomIdText}>{gameRoom.roomId}</Text>
-      </View>
-
-      <Board style={{ width: "85%", minHeight: 0, flex: 1, marginTop: 0 }}>
-        <ScrollView
-          ref={scrollViewRef}
-          showsVerticalScrollIndicator={false}
-          onContentSizeChange={handleScrollToEnd}
-        >
-          <View
-            style={{
-              flex: 1,
-              width: 300,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Header style={{ fontSize: 25, marginBottom: 12 }}>
-              Players ({gameRoom.players.length})
-            </Header>
-            {gameRoom.players.map((player, index) => {
-              const isPlayerHost =
-                player.isHost || player.id === gameRoom.hostId;
-              const canRemove =
-                isHost && !isPlayerHost && player.name !== playerName;
-              return (
-                <View key={index} style={styles.playerRow}>
-                  <Text style={styles.playerText}>
-                    {player.name} {isPlayerHost && "(Host)"}
-                  </Text>
-                  {canRemove && (
-                    <Pressable
-                      onPress={() => {
-                        Alert.alert(
-                          "Remove Player",
-                          `Are you sure you want to remove ${player.name} from the game?`,
-                          [
-                            {
-                              text: "Cancel",
-                              style: "cancel",
-                            },
-                            {
-                              text: "Remove",
-                              style: "destructive",
-                              onPress: () => removePlayer(player.name),
-                            },
-                          ]
-                        );
-                      }}
-                    >
-                      <Text
-                        style={{
-                          textAlign: "center",
-                          color: Colors.EXIT,
-                          fontWeight: 800,
-                          paddingRight: 5,
-                        }}
-                      >
-                        X
-                      </Text>
-                    </Pressable>
-                  )}
-                </View>
-              );
-            })}
-          </View>
-        </ScrollView>
-      </Board>
-
-      <View style={styles.buttonContainer}>
-        {!isHost && (
-          <View>
-            <Text style={styles.waitingText}>
-              Waiting for host to start the game...
+            <Text style={styles.qrLabel}>
+              Scan QR code or enter Room ID to join
             </Text>
+            <View style={styles.qrCodeWrapper}>
+              <QRCode
+                value={gameRoom.roomId.toString()}
+                size={140}
+                bgColor="white"
+                fgColor="black"
+              />
+            </View>
+            <Text style={styles.roomIdText}>{gameRoom.roomId}</Text>
           </View>
-        )}
-        {isHost && (
-          <Button
-            onPress={startGame}
-            style={{ backgroundColor: Colors.PRIMARY }}
-          >
-            Start Game
-          </Button>
-        )}
-        <Button onPress={quitGame} style={{ backgroundColor: Colors.EXIT }}>
-          Leave Game
-        </Button>
-        </View>
+
+          <Board style={{ width: "85%", minHeight: 0, flex: 1, marginTop: 0 }}>
+            <ScrollView
+              ref={scrollViewRef}
+              showsVerticalScrollIndicator={false}
+              onContentSizeChange={handleScrollToEnd}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  width: 300,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Header style={{ fontSize: 25, marginBottom: 12 }}>
+                  Players ({gameRoom.players.length})
+                </Header>
+                {gameRoom.players.map((player, index) => {
+                  const isPlayerHost =
+                    player.isHost || player.id === gameRoom.hostId;
+                  const canRemove =
+                    isHost && !isPlayerHost && player.name !== playerName;
+                  return (
+                    <View key={index} style={styles.playerRow}>
+                      <Text style={styles.playerText}>
+                        {player.name} {isPlayerHost && "(Host)"}
+                      </Text>
+                      {canRemove && (
+                        <Pressable
+                          onPress={() => {
+                            Alert.alert(
+                              "Remove Player",
+                              `Are you sure you want to remove ${player.name} from the game?`,
+                              [
+                                {
+                                  text: "Cancel",
+                                  style: "cancel",
+                                },
+                                {
+                                  text: "Remove",
+                                  style: "destructive",
+                                  onPress: () => removePlayer(player.name),
+                                },
+                              ]
+                            );
+                          }}
+                        >
+                          <Text
+                            style={{
+                              textAlign: "center",
+                              color: Colors.EXIT,
+                              fontWeight: 800,
+                              paddingRight: 5,
+                            }}
+                          >
+                            X
+                          </Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          </Board>
+
+          <View style={styles.buttonContainer}>
+            {!isHost && (
+              <View>
+                <Text style={styles.waitingText}>
+                  Waiting for host to start the game...
+                </Text>
+              </View>
+            )}
+            {isHost && (
+              <Button
+                onPress={startGame}
+                style={{ backgroundColor: Colors.PRIMARY }}
+              >
+                Start Game
+              </Button>
+            )}
+            <Button onPress={quitGame} style={{ backgroundColor: Colors.EXIT }}>
+              Leave Game
+            </Button>
+          </View>
         </View>
       </SafeAreaView>
     </View>
