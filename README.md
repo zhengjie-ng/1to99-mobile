@@ -17,6 +17,7 @@ A real-time multiplayer number guessing game mobile application built with React
 ### Navigation & State Management
 
 - **@react-navigation/native 7.1.17** - Navigation library for screen management
+- **@react-navigation/native-stack** - Stack nagivation across screens
 
 ### Real-time Communication
 
