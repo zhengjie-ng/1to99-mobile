@@ -1150,6 +1150,570 @@ export function useGame() {
 - **Error Handling**: Graceful error handling with user feedback
 - **State Synchronization**: Keeps all clients in sync through message handling
 
+### Step 4: UI Components
+
+Create the main menu component `src/components/Menu.jsx`:
+
+```jsx
+import React, { useState } from 'react';
+import { useGame } from '../context/GameContext';
+import './Menu.css';
+
+function Menu() {
+  const [playerName, setPlayerName] = useState('');
+  const [roomId, setRoomId] = useState('');
+  const { createRoom, joinRoom, error, clearError } = useGame();
+
+  const handleCreateRoom = (e) => {
+    e.preventDefault();
+    if (playerName.trim()) {
+      createRoom(playerName.trim());
+    }
+  };
+
+  const handleJoinRoom = (e) => {
+    e.preventDefault();
+    if (playerName.trim() && roomId.trim()) {
+      joinRoom(roomId.trim(), playerName.trim());
+    }
+  };
+
+  return (
+    <div className="menu-container">
+      <div className="menu-card">
+        <h1 className="title">Guess the Number</h1>
+        <p className="subtitle">Multiplayer Game - Avoid the Secret Number!</p>
+
+        {error && (
+          <div className="error-message">
+            {error}
+            <button onClick={clearError} className="close-error">×</button>
+          </div>
+        )}
+
+        <div className="input-section">
+          <input
+            type="text"
+            placeholder="Enter your name"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+            className="input-field"
+            maxLength={20}
+          />
+        </div>
+
+        <div className="actions">
+          <button
+            onClick={handleCreateRoom}
+            disabled={!playerName.trim()}
+            className="btn btn-primary"
+          >
+            Create Room
+          </button>
+
+          <div className="divider">OR</div>
+
+          <div className="join-section">
+            <input
+              type="text"
+              placeholder="Room ID"
+              value={roomId}
+              onChange={(e) => setRoomId(e.target.value)}
+              className="input-field"
+              maxLength={4}
+            />
+            <button
+              onClick={handleJoinRoom}
+              disabled={!playerName.trim() || !roomId.trim()}
+              className="btn btn-secondary"
+            >
+              Join Room
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Menu;
+```
+
+Create the lobby component `src/components/Lobby.jsx`:
+
+```jsx
+import React from 'react';
+import { useGame } from '../context/GameContext';
+import './Lobby.css';
+
+function Lobby() {
+  const {
+    gameRoom,
+    playerName,
+    startGame,
+    quitGame,
+    countdown,
+    isCountingDown
+  } = useGame();
+
+  if (!gameRoom) return null;
+
+  const isHost = gameRoom.players.find(p => p.name === playerName)?.isHost;
+  const canStart = gameRoom.players.length >= 2;
+
+  return (
+    <div className="lobby-container">
+      <div className="lobby-card">
+        <div className="room-header">
+          <h2>Room: {gameRoom.roomId}</h2>
+          <button onClick={quitGame} className="btn-quit">Leave</button>
+        </div>
+
+        {isCountingDown && (
+          <div className="countdown-overlay">
+            <div className="countdown-number">{countdown}</div>
+            <div className="countdown-text">Game Starting...</div>
+          </div>
+        )}
+
+        <div className="players-section">
+          <h3>Players ({gameRoom.players.length})</h3>
+          <div className="players-list">
+            {gameRoom.players.map((player) => (
+              <div key={player.id} className="player-item">
+                <span className="player-name">
+                  {player.name}
+                  {player.isHost && <span className="host-badge">HOST</span>}
+                  {player.name === playerName && <span className="you-badge">YOU</span>}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {isHost && (
+          <div className="host-controls">
+            <button
+              onClick={startGame}
+              disabled={!canStart || isCountingDown}
+              className="btn btn-primary btn-large"
+            >
+              {canStart ? 'Start Game' : 'Waiting for players...'}
+            </button>
+            {!canStart && (
+              <p className="hint">Need at least 2 players to start</p>
+            )}
+          </div>
+        )}
+
+        {!isHost && (
+          <div className="waiting-message">
+            <p>Waiting for host to start the game...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default Lobby;
+```
+
+Create the game play component `src/components/GamePlay.jsx`:
+
+```jsx
+import React, { useState } from 'react';
+import { useGame } from '../context/GameContext';
+import './GamePlay.css';
+
+function GamePlay() {
+  const { gameRoom, playerName, makeGuess, quitGame, gameHistory } = useGame();
+  const [guess, setGuess] = useState('');
+
+  if (!gameRoom) return null;
+
+  const currentPlayer = gameRoom.players[gameRoom.currentPlayerIndex];
+  const isMyTurn = currentPlayer?.name === playerName;
+  const myPlayerInfo = gameRoom.players.find(p => p.name === playerName);
+
+  const handleGuess = (e) => {
+    e.preventDefault();
+    const guessNum = parseInt(guess);
+
+    if (!isNaN(guessNum) && guessNum >= gameRoom.minRange && guessNum <= gameRoom.maxRange) {
+      makeGuess(guessNum);
+      setGuess('');
+    }
+  };
+
+  return (
+    <div className="gameplay-container">
+      <div className="game-header">
+        <div className="room-info">Room: {gameRoom.roomId}</div>
+        <button onClick={quitGame} className="btn-quit-small">Leave</button>
+      </div>
+
+      <div className="game-content">
+        {/* Range Display */}
+        <div className="range-display">
+          <div className="range-box">
+            <div className="range-label">Range</div>
+            <div className="range-value">
+              {gameRoom.minRange} - {gameRoom.maxRange}
+            </div>
+          </div>
+        </div>
+
+        {/* Current Turn */}
+        <div className="turn-info">
+          {isMyTurn ? (
+            <div className="your-turn">
+              <h3>YOUR TURN!</h3>
+              <p>Pick a number (but don't guess the secret number!)</p>
+            </div>
+          ) : (
+            <div className="waiting-turn">
+              <h3>Waiting for {currentPlayer?.name}...</h3>
+              <p>It's their turn to guess</p>
+            </div>
+          )}
+        </div>
+
+        {/* Guess Input */}
+        {isMyTurn && (
+          <form onSubmit={handleGuess} className="guess-form">
+            <input
+              type="number"
+              value={guess}
+              onChange={(e) => setGuess(e.target.value)}
+              placeholder={`${gameRoom.minRange} - ${gameRoom.maxRange}`}
+              min={gameRoom.minRange}
+              max={gameRoom.maxRange}
+              className="guess-input"
+              autoFocus
+            />
+            <button
+              type="submit"
+              disabled={!guess}
+              className="btn btn-guess"
+            >
+              Submit Guess
+            </button>
+          </form>
+        )}
+
+        {/* Players Status */}
+        <div className="players-status">
+          <h4>Players</h4>
+          <div className="players-grid">
+            {gameRoom.players.map((player, index) => (
+              <div
+                key={player.id}
+                className={`player-card ${index === gameRoom.currentPlayerIndex ? 'active' : ''}`}
+              >
+                <div className="player-card-name">
+                  {player.name}
+                  {player.name === playerName && ' (You)'}
+                </div>
+                {index === gameRoom.currentPlayerIndex && (
+                  <div className="turn-indicator">•</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Game History */}
+        <div className="history-section">
+          <h4>Game History</h4>
+          <div className="history-list">
+            {gameHistory.length === 0 ? (
+              <p className="no-history">No guesses yet</p>
+            ) : (
+              gameHistory.slice().reverse().map((turn, index) => (
+                <div key={index} className="history-item">
+                  <span className="history-player">{turn.playerName}</span>
+                  <span className="history-guess">guessed {turn.guess}</span>
+                  <span className="history-result">{turn.result}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default GamePlay;
+```
+
+Create the game finished component `src/components/GameFinished.jsx`:
+
+```jsx
+import React from 'react';
+import { useGame } from '../context/GameContext';
+import './GameFinished.css';
+
+function GameFinished() {
+  const { gameRoom, playerName, restartGame, quitGame, gameHistory } = useGame();
+
+  if (!gameRoom) return null;
+
+  const isHost = gameRoom.players.find(p => p.name === playerName)?.isHost;
+  const lastTurn = gameHistory[gameHistory.length - 1];
+  const loser = gameRoom.players.find(p => p.id === lastTurn?.playerId);
+
+  return (
+    <div className="finished-container">
+      <div className="finished-card">
+        <div className="game-over-header">
+          <h1>Game Over!</h1>
+        </div>
+
+        <div className="result-section">
+          <div className="loser-announcement">
+            <h2>{loser?.name} LOSES!</h2>
+            <p>They guessed the secret number: <strong>{lastTurn?.guess}</strong></p>
+          </div>
+
+          <div className="winners-section">
+            <h3>Winners 🎉</h3>
+            <div className="winners-list">
+              {gameRoom.players
+                .filter(p => p.id !== loser?.id)
+                .map(player => (
+                  <div key={player.id} className="winner-item">
+                    {player.name}
+                    {player.name === playerName && ' (You!)'}
+                  </div>
+                ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="game-summary">
+          <h4>Game Summary</h4>
+          <div className="summary-stats">
+            <div className="stat">
+              <span className="stat-label">Total Guesses:</span>
+              <span className="stat-value">{gameHistory.length}</span>
+            </div>
+            <div className="stat">
+              <span className="stat-label">Players:</span>
+              <span className="stat-value">{gameRoom.players.length}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="finished-actions">
+          {isHost ? (
+            <>
+              <button onClick={restartGame} className="btn btn-primary btn-large">
+                Play Again
+              </button>
+              <button onClick={quitGame} className="btn btn-secondary">
+                Leave Room
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="waiting-text">Waiting for host to restart...</p>
+              <button onClick={quitGame} className="btn btn-secondary">
+                Leave Room
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default GameFinished;
+```
+
+Create the main App component `src/App.jsx`:
+
+```jsx
+import React from 'react';
+import { GameProvider, useGame } from './context/GameContext';
+import Menu from './components/Menu';
+import Lobby from './components/Lobby';
+import GamePlay from './components/GamePlay';
+import GameFinished from './components/GameFinished';
+import './App.css';
+
+function GameRouter() {
+  const { gameState, connected } = useGame();
+
+  if (!connected) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-spinner"></div>
+        <p>Connecting to server...</p>
+      </div>
+    );
+  }
+
+  switch (gameState) {
+    case 'LOBBY':
+      return <Lobby />;
+    case 'PLAYING':
+      return <GamePlay />;
+    case 'FINISHED':
+      return <GameFinished />;
+    case 'MENU':
+    default:
+      return <Menu />;
+  }
+}
+
+function App() {
+  return (
+    <GameProvider>
+      <div className="app">
+        <GameRouter />
+      </div>
+    </GameProvider>
+  );
+}
+
+export default App;
+```
+
+### Step 5: Styling
+
+Create basic styling in `src/App.css`:
+
+```css
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Common Styles */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.btn-secondary {
+  background: #2196F3;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #0b7dda;
+  transform: translateY(-2px);
+}
+
+.btn-large {
+  padding: 16px 32px;
+  font-size: 18px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* Loading Screen */
+.loading-screen {
+  text-align: center;
+  color: white;
+}
+
+.loading-spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error Message */
+.error-message {
+  background: #f44336;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-error {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 8px;
+}
+```
+
+This provides a complete frontend implementation with:
+- **Menu screen** for creating/joining rooms
+- **Lobby** for waiting and starting games
+- **Gameplay** interface with turn management
+- **Game finished** screen with results
+- **Responsive styling** and animations
+
 ## Key Learning Points
 
 ### 1. WebSocket vs HTTP
