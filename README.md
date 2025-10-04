@@ -1,4 +1,4 @@
-# 1to99 Mobile
+# 1to99
 
 A real-time multiplayer number guessing game mobile application built with React Native and Expo.
 
